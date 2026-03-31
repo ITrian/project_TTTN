@@ -290,7 +290,6 @@ class WarrantyModel {
         $sql = "SELECT DISTINCT
                     p.maBH,
                     p.serial,
-                    p.soLuong,
                     p.ngayNhan,
                     p.moTaLoi,
                     p.trangThai,
