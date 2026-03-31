@@ -76,10 +76,24 @@ class WarrantyModel {
     // 3. Tạo phiếu bảo hành (CẬP NHẬT QUAN TRỌNG: Thêm maHH)
     public function createTicket($data) {
         // Bảng phieubh lưu các phiếu bảo hành
+        // Xử lý 2 trường hợp: serial (hàng theo serial) hoặc soLuong (hàng theo lô)
+        $serial = $data['serial'] ?? '';
+        $soLuong = $data['soLuong'] ?? '';
+        
+        // Nếu là loại lô (không có serial), lưu soLuong vào serial
+        $valueToStore = !empty($serial) ? $serial : $soLuong;
+        
         $sql = "INSERT INTO phieubh (maBH, maHH, serial, ngayNhan, moTaLoi, trangThai, maND) 
                 VALUES (:maBH, :maHH, :serial, NOW(), :moTaLoi, 0, :maND)";
         $stmt = $this->conn->prepare($sql);
-        return $stmt->execute($data);
+        
+        return $stmt->execute([
+            ':maBH' => $data['maBH'],
+            ':maHH' => $data['maHH'],
+            ':serial' => $valueToStore,
+            ':moTaLoi' => $data['moTaLoi'],
+            ':maND' => $data['maND']
+        ]);
     }
 
     // 4. Lấy chi tiết phiếu (Giữ nguyên logic nhưng query đơn giản hơn chút)

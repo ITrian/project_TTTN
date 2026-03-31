@@ -223,6 +223,7 @@
                     </div>
                     <input type="hidden" name="maHH" id="modalMaHH">
                     <input type="hidden" name="serial" id="modalSerial">
+                    <input type="hidden" name="soLuong" id="modalSoLuongInput">
                     
                     <div class="mb-3">
                         <label for="moTaLoi" class="form-label">Mô tả lỗi <span class="text-danger">*</span></label>
@@ -243,6 +244,7 @@
     function setWarrantyData(maHH, tenHH, serial, soLuong) {
         document.getElementById('modalMaHH').value = maHH;
         document.getElementById('modalSerial').value = serial;
+        document.getElementById('modalSoLuongInput').value = soLuong;
         document.getElementById('modalProductName').textContent = tenHH + ' (Mã: ' + maHH + ')';
         document.getElementById('modalSoLuong').textContent = soLuong;
         document.getElementById('moTaLoi').value = ''; // Clear previous input

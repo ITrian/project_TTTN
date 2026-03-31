@@ -109,7 +109,8 @@ class WarrantyController extends Controller {
             $data = [
                 'maBH' => $maBH,
                 'maHH' => $_POST['maHH'],
-                'serial' => $_POST['serial'],
+                'serial' => $_POST['serial'] ?? '',
+                'soLuong' => $_POST['soLuong'] ?? '',
                 'moTaLoi' => $_POST['moTaLoi'],
                 'maND' => $_SESSION['user_id']
             ];
