@@ -75,9 +75,9 @@ class WarrantyModel {
 
     // 3. Tạo phiếu bảo hành (CẬP NHẬT QUAN TRỌNG: Thêm maHH)
     public function createTicket($data) {
-        // Bảng phieubh mới yêu cầu cột maHH và maPX
-        $sql = "INSERT INTO phieubh (maBH, maHH, maPX, serial, ngayNhan, moTaLoi, trangThai, maND) 
-                VALUES (:maBH, :maHH, :maPX, :serial, NOW(), :moTaLoi, 0, :maND)";
+        // Bảng phieubh lưu các phiếu bảo hành
+        $sql = "INSERT INTO phieubh (maBH, maHH, serial, ngayNhan, moTaLoi, trangThai, maND) 
+                VALUES (:maBH, :maHH, :serial, NOW(), :moTaLoi, 0, :maND)";
         $stmt = $this->conn->prepare($sql);
         return $stmt->execute($data);
     }
@@ -274,7 +274,7 @@ class WarrantyModel {
 
     // 10. Lấy lịch sử bảo hành của một sản phẩm cụ thể từ một phiếu xuất
     public function getWarrantyHistoryByProduct($maHH, $maPX) {
-        $sql = "SELECT 
+        $sql = "SELECT DISTINCT
                     p.maBH,
                     p.serial,
                     p.ngayNhan,
@@ -283,7 +283,9 @@ class WarrantyModel {
                     nd.tenND
                 FROM phieubh p
                 LEFT JOIN nguoidung nd ON p.maND = nd.maND
-                WHERE p.maHH = :maHH AND p.maPX = :maPX
+                LEFT JOIN ct_phieuxuat_serial cps ON (p.serial = cps.serial AND cps.maHH = :maHH)
+                WHERE p.maHH = :maHH 
+                AND (cps.maPX = :maPX OR (p.serial IS NULL AND cps.maPX = :maPX))
                 ORDER BY p.ngayNhan DESC";
         
         $stmt = $this->conn->prepare($sql);
