@@ -206,9 +206,34 @@ class WarrantyModel {
                 $item['hanBaoHanh'] = null;
                 $item['conBaoHanh'] = false;
             }
+            
+            // Lấy danh sách serial cho sản phẩm này (nếu là loại SERIAL)
+            if ($item['loaiHang'] == 'SERIAL') {
+                $item['serials'] = $this->getSerialsByProductInExport($maPX, $item['maHH']);
+            } else {
+                $item['serials'] = [];
+            }
         }
         
         return $results;
+    }
+
+    // 7. Lấy danh sách serial của một sản phẩm cụ thể trong một phiếu xuất
+    public function getSerialsByProductInExport($maPX, $maHH) {
+        $sql = "SELECT 
+                    cps.serial,
+                    CASE 
+                        WHEN cps.trangThai = 'ACTIVE' THEN 'Có hạn'
+                        WHEN cps.trangThai = 'EXPIRED' THEN 'Hết hạn'
+                        ELSE 'Unknown'
+                    END as trangThaiSerial
+                FROM CT_PHIEUXUAT_SERIAL cps
+                WHERE cps.maPX = :maPX AND cps.maHH = :maHH
+                ORDER BY cps.serial ASC";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute(['maPX' => $maPX, 'maHH' => $maHH]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
 ?>

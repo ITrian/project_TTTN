@@ -100,6 +100,27 @@
                                     </div>
                                 </td>
                             </tr>
+                            <!-- Hiển thị danh sách Serial nếu là sản phẩm loại SERIAL -->
+                            <?php if ($product['loaiHang'] == 'SERIAL' && !empty($product['serials'])): ?>
+                            <tr class="table-light">
+                                <td colspan="10">
+                                    <strong>Danh sách Serial:</strong><br>
+                                    <div class="mt-2">
+                                        <?php foreach ($product['serials'] as $serial): ?>
+                                            <span class="badge bg-primary me-2 mb-2" style="font-size: 12px; padding: 6px 10px;">
+                                                <?php echo $serial['serial']; ?>
+                                            </span>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php elseif ($product['loaiHang'] == 'SERIAL' && empty($product['serials'])): ?>
+                            <tr class="table-light">
+                                <td colspan="10">
+                                    <small class="text-muted"><i class="fas fa-info-circle"></i> Chưa cập nhật serial cho sản phẩm này</small>
+                                </td>
+                            </tr>
+                            <?php endif; ?>
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
