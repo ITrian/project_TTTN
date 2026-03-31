@@ -78,7 +78,7 @@ class WarrantyModel {
         // Bảng phieubh lưu các phiếu bảo hành
         // Xử lý 2 trường hợp: serial (hàng theo serial) hoặc soLuong (hàng theo lô)
         $serial = $data['serial'] ?? '';
-        $soLuong = $data['soLuong'] ?? '';
+        $soLuong = (int)($data['soLuong'] ?? 0);
         
         // Lưu serial và soLuong riêng biệt
         $sql = "INSERT INTO phieubh (maBH, maHH, serial, soLuong, ngayNhan, moTaLoi, trangThai, maND) 
@@ -296,12 +296,11 @@ class WarrantyModel {
                     nd.tenND
                 FROM phieubh p
                 LEFT JOIN nguoidung nd ON p.maND = nd.maND
-                WHERE p.maHH = :maHH 
-                AND p.soLuong = :soLuong
+                WHERE p.maHH = :maHH
                 ORDER BY p.ngayNhan DESC";
         
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute(['maHH' => $maHH, 'soLuong' => $soLuong]);
+        $stmt->execute(['maHH' => $maHH]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

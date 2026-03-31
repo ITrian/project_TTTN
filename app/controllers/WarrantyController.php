@@ -82,10 +82,15 @@ class WarrantyController extends Controller {
         $exportModel = $this->model('ExportModel');
         $exportInfo = $exportModel->getExportById($maPX);
 
-        // Lấy lịch sử bảo hành cho mỗi sản phẩm
+        // Lấy lịch sử bảo hành cho mỗi sản phẩm (defensive: ignore errors)
         foreach ($exportedProducts as &$product) {
-            // Lấy lịch sử bảo hành riêng theo số lượng/lô
-            $product['warrantyHistory'] = $this->warrantyModel->getWarrantyHistoryByProduct($product['maHH'], $product['soLuong']);
+            try {
+                // Lấy lịch sử bảo hành theo maHH (no longer filters by soLuong)
+                $product['warrantyHistory'] = $this->warrantyModel->getWarrantyHistoryByProduct($product['maHH'], $product['soLuong']);
+            } catch (Exception $e) {
+                $product['warrantyHistory'] = [];
+                error_log("Warranty history fetch failed for maHH: " . $product['maHH'] . " - " . $e->getMessage());
+            }
             
             // Lấy lịch sử bảo hành cho từng serial nếu là loại SERIAL
             if ($product['loaiHang'] == 'SERIAL' && !empty($product['serials'])) {
