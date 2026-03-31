@@ -1,41 +1,14 @@
 <?php require_once APP_ROOT . '/views/layouts/header.php'; ?>
-<?php require_once APP_ROOT . '/views/layouts/sidebar.php'; ?>
 
 <div class="container-fluid">
-    <h1 class="h3 mb-4 text-gray-800">Danh sách sản phẩm đã xuất & Trạng thái bảo hành</h1>
-
-    <!-- Thống kê -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card shadow border-left-primary">
-                <div class="card-body">
-                    <div class="text-primary font-weight-bold text-uppercase mb-1">Tổng số sản phẩm</div>
-                    <div class="h3 mb-0"><?php echo $data['stats']['total']; ?></div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card shadow border-left-success">
-                <div class="card-body">
-                    <div class="text-success font-weight-bold text-uppercase mb-1">Còn bảo hành</div>
-                    <div class="h3 mb-0"><?php echo $data['stats']['conHan']; ?></div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card shadow border-left-danger">
-                <div class="card-body">
-                    <div class="text-danger font-weight-bold text-uppercase mb-1">Hết bảo hành</div>
-                    <div class="h3 mb-0"><?php echo $data['stats']['hetHan']; ?></div>
-                </div>
-            </div>
-        </div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 text-gray-800 mb-0">Danh sách sản phẩm đã xuất</h1>
     </div>
 
     <!-- Bảng danh sách -->
     <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Danh sách chi tiết</h6>
+        <div class="card-header py-3 bg-light">
+            <h6 class="m-0 font-weight-bold text-primary">Sản phẩm đã xuất bán</h6>
         </div>
         <div class="card-body">
             <div class="table-responsive">

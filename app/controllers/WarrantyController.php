@@ -82,6 +82,18 @@ class WarrantyController extends Controller {
         $exportModel = $this->model('ExportModel');
         $exportInfo = $exportModel->getExportById($maPX);
 
+        // Lấy lịch sử bảo hành cho mỗi sản phẩm
+        foreach ($exportedProducts as &$product) {
+            $product['warrantyHistory'] = $this->warrantyModel->getWarrantyHistoryByProduct($product['maHH'], $maPX);
+            
+            // Lấy lịch sử bảo hành cho từng serial nếu là loại SERIAL
+            if ($product['loaiHang'] == 'SERIAL' && !empty($product['serials'])) {
+                foreach ($product['serials'] as &$serial) {
+                    $serial['history'] = $this->warrantyModel->getWarrantyHistoryBySerial($serial['serial']);
+                }
+            }
+        }
+
         $this->view('warranty/export_detail', [
             'title' => 'Chi tiết bảo hành phiếu xuất',
             'exportInfo' => $exportInfo,

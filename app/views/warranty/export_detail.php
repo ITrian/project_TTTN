@@ -106,9 +106,37 @@
                                     <strong>Danh sách Serial:</strong><br>
                                     <div class="mt-2">
                                         <?php foreach ($product['serials'] as $serial): ?>
-                                            <span class="badge bg-primary me-2 mb-2" style="font-size: 12px; padding: 6px 10px;">
-                                                <?php echo $serial['serial']; ?>
-                                            </span>
+                                            <div class="mb-3 p-3 border rounded bg-white">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <span class="badge bg-primary" style="font-size: 14px; padding: 8px 12px;">
+                                                        <?php echo $serial['serial']; ?>
+                                                    </span>
+                                                </div>
+                                                <!-- Lịch sử bảo hành của serial này -->
+                                                <?php if (!empty($serial['history'])): ?>
+                                                    <div class="mt-2">
+                                                        <small class="text-muted"><strong>Lịch sử bảo hành:</strong></small>
+                                                        <ul class="list-unstyled mt-2" style="font-size: 12px;">
+                                                            <?php foreach ($serial['history'] as $record): ?>
+                                                                <li class="mb-2 p-2 border-left-4 border-warning bg-light">
+                                                                    <strong><?php echo date('d/m/Y H:i', strtotime($record['ngayNhan'])); ?></strong>
+                                                                    - <?php echo $record['tenND'] ? 'Người tiếp nhận: ' . $record['tenND'] : 'N/A'; ?>
+                                                                    <br>
+                                                                    <span class="text-muted">Lỗi: <?php echo $record['moTaLoi'] ?: 'N/A'; ?></span>
+                                                                    <br>
+                                                                    <span class="badge bg-<?php echo $record['trangThai'] == 1 ? 'success' : 'warning'; ?>" style="font-size: 10px;">
+                                                                        <?php echo $record['trangThai'] == 1 ? 'Hoàn thành' : 'Đang xử lý'; ?>
+                                                                    </span>
+                                                                </li>
+                                                            <?php endforeach; ?>
+                                                        </ul>
+                                                    </div>
+                                                <?php else: ?>
+                                                    <div class="mt-2">
+                                                        <small class="text-muted">Chưa có phiếu bảo hành nào</small>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
                                         <?php endforeach; ?>
                                     </div>
                                 </td>
@@ -117,6 +145,41 @@
                             <tr class="table-light">
                                 <td colspan="10">
                                     <small class="text-muted"><i class="fas fa-info-circle"></i> Chưa cập nhật serial cho sản phẩm này</small>
+                                </td>
+                            </tr>
+                            <!-- Hiển thị lịch sử bảo hành cho sản phẩm loại Lô -->
+                            <?php elseif ($product['loaiHang'] == 'LO' && !empty($product['warrantyHistory'])): ?>
+                            <tr class="table-light">
+                                <td colspan="10">
+                                    <strong>Lịch sử bảo hành:</strong>
+                                    <ul class="list-unstyled mt-3" style="font-size: 13px;">
+                                        <?php foreach ($product['warrantyHistory'] as $record): ?>
+                                            <li class="mb-3 p-3 border-left-4 border-warning bg-white border rounded">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div>
+                                                        <strong class="text-primary"><?php echo $record['maBH']; ?></strong>
+                                                        <br>
+                                                        <small class="text-muted">
+                                                            Ngày nhận: <strong><?php echo date('d/m/Y H:i', strtotime($record['ngayNhan'])); ?></strong>
+                                                        </small>
+                                                        <br>
+                                                        <small class="text-muted">Người tiếp nhận: <strong><?php echo $record['tenND'] ?: 'N/A'; ?></strong></small>
+                                                        <br>
+                                                        <small class="text-muted">Lỗi: <strong><?php echo $record['moTaLoi'] ?: 'N/A'; ?></strong></small>
+                                                    </div>
+                                                    <span class="badge bg-<?php echo $record['trangThai'] == 1 ? 'success' : 'warning'; ?>">
+                                                        <?php echo $record['trangThai'] == 1 ? 'Hoàn thành' : 'Đang xử lý'; ?>
+                                                    </span>
+                                                </div>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <?php elseif ($product['loaiHang'] == 'LO' && empty($product['warrantyHistory'])): ?>
+                            <tr class="table-light">
+                                <td colspan="10">
+                                    <small class="text-muted"><i class="fas fa-info-circle"></i> Chưa có phiếu bảo hành cho sản phẩm này</small>
                                 </td>
                             </tr>
                             <?php endif; ?>

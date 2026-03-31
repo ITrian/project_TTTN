@@ -250,5 +250,45 @@ class WarrantyModel {
         // Lấy top N
         return array_slice($warrantyProducts, 0, $limit);
     }
+
+    // 9. Lấy lịch sử bảo hành của một serial
+    public function getWarrantyHistoryBySerial($serial) {
+        $sql = "SELECT 
+                    p.maBH,
+                    p.ngayNhan,
+                    p.moTaLoi,
+                    p.trangThai,
+                    nd.tenND,
+                    h.tenHH,
+                    h.maHH
+                FROM phieubh p
+                LEFT JOIN nguoidung nd ON p.maND = nd.maND
+                LEFT JOIN hanghoa h ON p.maHH = h.maHH
+                WHERE p.serial = :serial
+                ORDER BY p.ngayNhan DESC";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute(['serial' => $serial]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // 10. Lấy lịch sử bảo hành của một sản phẩm cụ thể từ một phiếu xuất
+    public function getWarrantyHistoryByProduct($maHH, $maPX) {
+        $sql = "SELECT 
+                    p.maBH,
+                    p.serial,
+                    p.ngayNhan,
+                    p.moTaLoi,
+                    p.trangThai,
+                    nd.tenND
+                FROM phieubh p
+                LEFT JOIN nguoidung nd ON p.maND = nd.maND
+                WHERE p.maHH = :maHH 
+                ORDER BY p.ngayNhan DESC";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute(['maHH' => $maHH]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 ?>
