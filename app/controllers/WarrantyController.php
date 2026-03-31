@@ -84,7 +84,8 @@ class WarrantyController extends Controller {
 
         // Lấy lịch sử bảo hành cho mỗi sản phẩm
         foreach ($exportedProducts as &$product) {
-            $product['warrantyHistory'] = $this->warrantyModel->getWarrantyHistoryByProduct($product['maHH'], $maPX);
+            // Lấy lịch sử bảo hành riêng theo số lượng/lô
+            $product['warrantyHistory'] = $this->warrantyModel->getWarrantyHistoryByProduct($product['maHH'], $product['soLuong']);
             
             // Lấy lịch sử bảo hành cho từng serial nếu là loại SERIAL
             if ($product['loaiHang'] == 'SERIAL' && !empty($product['serials'])) {

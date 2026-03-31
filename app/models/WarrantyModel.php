@@ -73,24 +73,23 @@ class WarrantyModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // 3. Tạo phiếu bảo hành (CẬP NHẬT QUAN TRỌNG: Thêm maHH)
+    // 3. Tạo phiếu bảo hành (CẬP NHẬT QUAN TRỌNG: Lưu soLuong riêng cho sản phẩm lô)
     public function createTicket($data) {
         // Bảng phieubh lưu các phiếu bảo hành
         // Xử lý 2 trường hợp: serial (hàng theo serial) hoặc soLuong (hàng theo lô)
         $serial = $data['serial'] ?? '';
         $soLuong = $data['soLuong'] ?? '';
         
-        // Nếu là loại lô (không có serial), lưu soLuong vào serial
-        $valueToStore = !empty($serial) ? $serial : $soLuong;
-        
-        $sql = "INSERT INTO phieubh (maBH, maHH, serial, ngayNhan, moTaLoi, trangThai, maND) 
-                VALUES (:maBH, :maHH, :serial, NOW(), :moTaLoi, 0, :maND)";
+        // Lưu serial và soLuong riêng biệt
+        $sql = "INSERT INTO phieubh (maBH, maHH, serial, soLuong, ngayNhan, moTaLoi, trangThai, maND) 
+                VALUES (:maBH, :maHH, :serial, :soLuong, NOW(), :moTaLoi, 0, :maND)";
         $stmt = $this->conn->prepare($sql);
         
         return $stmt->execute([
             ':maBH' => $data['maBH'],
             ':maHH' => $data['maHH'],
-            ':serial' => $valueToStore,
+            ':serial' => $serial,
+            ':soLuong' => $soLuong,
             ':moTaLoi' => $data['moTaLoi'],
             ':maND' => $data['maND']
         ]);
@@ -286,24 +285,24 @@ class WarrantyModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // 10. Lấy lịch sử bảo hành của một sản phẩm cụ thể từ một phiếu xuất
-    public function getWarrantyHistoryByProduct($maHH, $maPX) {
+    // 10. Lấy lịch sử bảo hành của một sản phẩm cụ thể từ một phiếu xuất theo lô
+    public function getWarrantyHistoryByProduct($maHH, $soLuong) {
         $sql = "SELECT DISTINCT
                     p.maBH,
                     p.serial,
+                    p.soLuong,
                     p.ngayNhan,
                     p.moTaLoi,
                     p.trangThai,
                     nd.tenND
                 FROM phieubh p
                 LEFT JOIN nguoidung nd ON p.maND = nd.maND
-                LEFT JOIN ct_phieuxuat_serial cps ON (p.serial = cps.serial AND cps.maHH = :maHH)
                 WHERE p.maHH = :maHH 
-                AND (cps.maPX = :maPX OR (p.serial IS NULL AND cps.maPX = :maPX))
+                AND p.soLuong = :soLuong
                 ORDER BY p.ngayNhan DESC";
         
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute(['maHH' => $maHH, 'maPX' => $maPX]);
+        $stmt->execute(['maHH' => $maHH, 'soLuong' => $soLuong]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
