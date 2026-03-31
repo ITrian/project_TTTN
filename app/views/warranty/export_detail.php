@@ -1,5 +1,4 @@
 <?php require_once APP_ROOT . '/views/layouts/header.php'; ?>
-<?php require_once APP_ROOT . '/views/layouts/sidebar.php'; ?>
 
 <div class="container-fluid">
     <h1 class="h3 mb-4 text-gray-800">Chi tiết bảo hành phiếu xuất</h1>
