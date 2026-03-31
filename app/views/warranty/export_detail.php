@@ -90,7 +90,7 @@
                                     <div class="btn-group" role="group">
                                         <?php if ($product['conBaoHanh']): ?>
                                             <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#warrantyModal"
-                                                onclick="setWarrantyData('<?php echo $product['maHH']; ?>', '<?php echo addslashes($product['tenHH']); ?>', '')">
+                                                onclick="setWarrantyData('<?php echo $product['maHH']; ?>', '<?php echo addslashes($product['tenHH']); ?>', '', '<?php echo $product['soLuong']; ?>')">
                                                 <i class="fas fa-plus-circle"></i> Phiếu BH
                                             </button>
                                         <?php else: ?>
@@ -217,6 +217,10 @@
                         <label class="form-label"><strong>Sản phẩm:</strong></label>
                         <p id="modalProductName" class="form-control-plaintext border-bottom pb-2 fw-bold text-primary"></p>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Số lượng:</strong></label>
+                        <p id="modalSoLuong" class="form-control-plaintext border-bottom pb-2 text-secondary">-</p>
+                    </div>
                     <input type="hidden" name="maHH" id="modalMaHH">
                     <input type="hidden" name="serial" id="modalSerial">
                     
@@ -236,10 +240,11 @@
 </div>
 
 <script>
-    function setWarrantyData(maHH, tenHH, serial) {
+    function setWarrantyData(maHH, tenHH, serial, soLuong) {
         document.getElementById('modalMaHH').value = maHH;
         document.getElementById('modalSerial').value = serial;
         document.getElementById('modalProductName').textContent = tenHH + ' (Mã: ' + maHH + ')';
+        document.getElementById('modalSoLuong').textContent = soLuong;
         document.getElementById('moTaLoi').value = ''; // Clear previous input
     }
 </script>

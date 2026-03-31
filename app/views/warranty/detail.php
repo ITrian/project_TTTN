@@ -2,9 +2,6 @@
 
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <a href="<?php echo BASE_URL; ?>/" class="btn btn-secondary">
-            <i class="bi bi-arrow-left"></i> Quay lại
-        </a>
         <button onclick="window.print()" class="btn btn-primary">
             <i class="bi bi-printer"></i> In Phiếu
         </button>
