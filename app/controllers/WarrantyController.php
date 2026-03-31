@@ -105,10 +105,11 @@ class WarrantyController extends Controller {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $maBH = 'BH' . time();
             
-            // Lấy dữ liệu từ form (bao gồm cả maHH vừa thêm)
+            // Lấy dữ liệu từ form (bao gồm cả maHH và maPX)
             $data = [
                 'maBH' => $maBH,
-                'maHH' => $_POST['maHH'],   // <-- MỚI: Bắt buộc phải có
+                'maHH' => $_POST['maHH'],
+                'maPX' => $_POST['maPX'],   // <-- Bắt buộc để filter đúng lịch sử
                 'serial' => $_POST['serial'],
                 'moTaLoi' => $_POST['moTaLoi'],
                 'maND' => $_SESSION['user_id']

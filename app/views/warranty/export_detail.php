@@ -90,7 +90,7 @@
                                     <div class="btn-group" role="group">
                                         <?php if ($product['conBaoHanh']): ?>
                                             <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#warrantyModal"
-                                                onclick="setWarrantyData('<?php echo $product['maHH']; ?>', '<?php echo addslashes($product['tenHH']); ?>', '<?php echo $product['maPX']; ?>')">
+                                                onclick="setWarrantyData('<?php echo $product['maHH']; ?>', '<?php echo addslashes($product['tenHH']); ?>', '', '<?php echo $product['maPX']; ?>')">
                                                 <i class="fas fa-plus-circle"></i> Phiếu BH
                                             </button>
                                         <?php else: ?>
@@ -219,6 +219,7 @@
                     </div>
                     <input type="hidden" name="maHH" id="modalMaHH">
                     <input type="hidden" name="serial" id="modalSerial">
+                    <input type="hidden" name="maPX" id="modalMaPX">
                     
                     <div class="mb-3">
                         <label for="moTaLoi" class="form-label">Mô tả lỗi <span class="text-danger">*</span></label>
@@ -236,9 +237,10 @@
 </div>
 
 <script>
-    function setWarrantyData(maHH, tenHH, serial) {
+    function setWarrantyData(maHH, tenHH, serial, maPX) {
         document.getElementById('modalMaHH').value = maHH;
         document.getElementById('modalSerial').value = serial;
+        document.getElementById('modalMaPX').value = maPX;
         document.getElementById('modalProductName').textContent = tenHH + ' (Mã: ' + maHH + ')';
         document.getElementById('moTaLoi').value = ''; // Clear previous input
     }

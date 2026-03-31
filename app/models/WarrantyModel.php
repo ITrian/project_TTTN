@@ -75,9 +75,9 @@ class WarrantyModel {
 
     // 3. Tạo phiếu bảo hành (CẬP NHẬT QUAN TRỌNG: Thêm maHH)
     public function createTicket($data) {
-        // Bảng phieubh mới yêu cầu cột maHH
-        $sql = "INSERT INTO phieubh (maBH, maHH, serial, ngayNhan, moTaLoi, trangThai, maND) 
-                VALUES (:maBH, :maHH, :serial, NOW(), :moTaLoi, 0, :maND)";
+        // Bảng phieubh mới yêu cầu cột maHH và maPX
+        $sql = "INSERT INTO phieubh (maBH, maHH, maPX, serial, ngayNhan, moTaLoi, trangThai, maND) 
+                VALUES (:maBH, :maHH, :maPX, :serial, NOW(), :moTaLoi, 0, :maND)";
         $stmt = $this->conn->prepare($sql);
         return $stmt->execute($data);
     }
@@ -283,11 +283,11 @@ class WarrantyModel {
                     nd.tenND
                 FROM phieubh p
                 LEFT JOIN nguoidung nd ON p.maND = nd.maND
-                WHERE p.maHH = :maHH 
+                WHERE p.maHH = :maHH AND p.maPX = :maPX
                 ORDER BY p.ngayNhan DESC";
         
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute(['maHH' => $maHH]);
+        $stmt->execute(['maHH' => $maHH, 'maPX' => $maPX]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
