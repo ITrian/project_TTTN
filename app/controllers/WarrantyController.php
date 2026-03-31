@@ -118,5 +118,34 @@ class WarrantyController extends Controller {
         if (!$ticket) die("Không tìm thấy phiếu!");
         $this->view('warranty/detail', ['title' => 'Chi tiết phiếu', 'ticket' => $ticket]);
     }
+
+    // Hàm trả về dữ liệu báo cáo dưới dạng JSON
+    public function getReportData() {
+        header('Content-Type: application/json');
+        
+        $products = $this->warrantyModel->getExportedProductsWithWarranty();
+        
+        $total = count($products);
+        $active = 0;
+        $expired = 0;
+        
+        foreach ($products as $item) {
+            if (isset($item['conBaoHanh']) && $item['conBaoHanh']) {
+                $active++;
+            } else {
+                $expired++;
+            }
+        }
+        
+        // Lấy top 5 sản phẩm gần hết hạn
+        $topProducts = $this->warrantyModel->getWarrantyOverview(5);
+        
+        echo json_encode([
+            'total' => $total,
+            'active' => $active,
+            'expired' => $expired,
+            'topProducts' => $topProducts
+        ]);
+    }
 }
 ?>

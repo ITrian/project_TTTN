@@ -230,5 +230,25 @@ class WarrantyModel {
         $stmt->execute(['maPX' => $maPX, 'maHH' => $maHH]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    // 8. Lấy danh sách overview bảo hành (gần hết hạn nhất) để hiển thị trên trang chủ
+    public function getWarrantyOverview($limit = 5) {
+        $products = $this->getExportedProductsWithWarranty();
+        
+        // Lọc chỉ những sản phẩm còn bảo hành
+        $warrantyProducts = array_filter($products, function($item) {
+            return isset($item['conBaoHanh']) && $item['conBaoHanh'];
+        });
+        
+        // Sort theo số ngày còn lại (gần hết hạn nhất lên trước)
+        usort($warrantyProducts, function($a, $b) {
+            $daysA = isset($a['ngayConLai']) ? $a['ngayConLai'] : 999999;
+            $daysB = isset($b['ngayConLai']) ? $b['ngayConLai'] : 999999;
+            return $daysA - $daysB;
+        });
+        
+        // Lấy top N
+        return array_slice($warrantyProducts, 0, $limit);
+    }
 }
 ?>
