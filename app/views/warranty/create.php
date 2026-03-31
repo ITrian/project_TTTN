@@ -1,5 +1,4 @@
 <?php require_once APP_ROOT . '/views/layouts/header.php'; ?>
-<?php require_once APP_ROOT . '/views/layouts/sidebar.php'; ?>
 
 <div class="container-fluid mt-4">
     <h3 class="mb-4">Tiếp nhận Bảo hành</h3>
