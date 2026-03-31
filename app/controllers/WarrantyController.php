@@ -44,6 +44,51 @@ class WarrantyController extends Controller {
         ]);
     }
 
+    // Hàm mới: Hiển thị danh sách sản phẩm đã xuất (đã bán) với trạng thái bảo hành
+    public function listExported() {
+        $exportedProducts = $this->warrantyModel->getExportedProductsWithWarranty();
+        
+        // Tính toán thống kê
+        $stats = [
+            'total' => count($exportedProducts),
+            'conHan' => 0,
+            'hetHan' => 0
+        ];
+        
+        foreach ($exportedProducts as $product) {
+            if ($product['conBaoHanh']) {
+                $stats['conHan']++;
+            } else {
+                $stats['hetHan']++;
+            }
+        }
+
+        $this->view('warranty/exported', [
+            'title' => 'Danh sách sản phẩm đã xuất',
+            'products' => $exportedProducts,
+            'stats' => $stats
+        ]);
+    }
+
+    // Hàm mới: Hiển thị chi tiết sản phẩm từ một phiếu xuất cụ thể
+    public function exportDetail($maPX) {
+        $exportedProducts = $this->warrantyModel->getExportedProductsByExportId($maPX);
+        
+        if (empty($exportedProducts)) {
+            die("Không tìm thấy phiếu xuất này!");
+        }
+
+        // Lấy thông tin header của phiếu xuất
+        $exportModel = $this->model('ExportModel');
+        $exportInfo = $exportModel->getExportById($maPX);
+
+        $this->view('warranty/export_detail', [
+            'title' => 'Chi tiết bảo hành phiếu xuất',
+            'exportInfo' => $exportInfo,
+            'products' => $exportedProducts
+        ]);
+    }
+
     public function create() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $maBH = 'BH' . time();

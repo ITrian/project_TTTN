@@ -93,5 +93,122 @@ class WarrantyModel {
         $stmt->execute(['maBH' => $maBH]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    // 5. Lấy danh sách tất cả sản phẩm đã xuất (đã bán) với thông tin bảo hành
+    public function getExportedProductsWithWarranty() {
+        $sql = "SELECT 
+                    px.maPX,
+                    px.ngayXuat,
+                    ct.maHH,
+                    h.tenHH,
+                    h.model,
+                    h.loaiHang,
+                    h.thoiGianBaoHanh,
+                    ct.soLuong,
+                    ct.donGia,
+                    kh.tenKH,
+                    kh.sdt,
+                    nd.tenND as nguoiTao
+                FROM PHIEUXUAT px
+                JOIN CT_PHIEUXUAT ct ON px.maPX = ct.maPX
+                JOIN HANGHOA h ON ct.maHH = h.maHH
+                LEFT JOIN KHACHHANG kh ON px.maKH = kh.maKH
+                LEFT JOIN NGUOIDUNG nd ON px.maNDXuat = nd.maND
+                ORDER BY px.ngayXuat DESC, ct.maHH ASC";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Xử lý tính toán hạn bảo hành cho mỗi sản phẩm
+        foreach ($results as &$item) {
+            if (!empty($item['ngayXuat']) && isset($item['thoiGianBaoHanh'])) {
+                $exportDate = new DateTime($item['ngayXuat']);
+                $months = (int)$item['thoiGianBaoHanh'];
+                $expiryDate = clone $exportDate;
+                $expiryDate->modify("+$months months");
+                
+                $item['hanBaoHanh'] = $expiryDate->format('Y-m-d');
+                $item['hanBaoHanh_formatted'] = $expiryDate->format('d/m/Y');
+                
+                // Kiểm tra còn bảo hành hay không
+                $now = new DateTime();
+                $item['conBaoHanh'] = ($now <= $expiryDate);
+                
+                // Tính số ngày còn lại
+                if ($item['conBaoHanh']) {
+                    $interval = $now->diff($expiryDate);
+                    $item['ngayConLai'] = $interval->days;
+                    $item['soThang'] = $interval->m + ($interval->y * 12);
+                } else {
+                    $interval = $expiryDate->diff($now);
+                    $item['ngayQuaHan'] = $interval->days;
+                }
+            } else {
+                $item['hanBaoHanh'] = null;
+                $item['conBaoHanh'] = false;
+            }
+        }
+        
+        return $results;
+    }
+
+    // 6. Lấy danh sách sản phẩm đã xuất theo phiếu xuất cụ thể với warranty status
+    public function getExportedProductsByExportId($maPX) {
+        $sql = "SELECT 
+                    px.maPX,
+                    px.ngayXuat,
+                    ct.maHH,
+                    h.tenHH,
+                    h.model,
+                    h.loaiHang,
+                    h.thoiGianBaoHanh,
+                    ct.soLuong,
+                    ct.donGia,
+                    kh.tenKH,
+                    kh.sdt
+                FROM PHIEUXUAT px
+                JOIN CT_PHIEUXUAT ct ON px.maPX = ct.maPX
+                JOIN HANGHOA h ON ct.maHH = h.maHH
+                LEFT JOIN KHACHHANG kh ON px.maKH = kh.maKH
+                WHERE px.maPX = :maPX
+                ORDER BY ct.maHH ASC";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute(['maPX' => $maPX]);
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Xử lý tính toán hạn bảo hành cho mỗi sản phẩm
+        foreach ($results as &$item) {
+            if (!empty($item['ngayXuat']) && isset($item['thoiGianBaoHanh'])) {
+                $exportDate = new DateTime($item['ngayXuat']);
+                $months = (int)$item['thoiGianBaoHanh'];
+                $expiryDate = clone $exportDate;
+                $expiryDate->modify("+$months months");
+                
+                $item['hanBaoHanh'] = $expiryDate->format('Y-m-d');
+                $item['hanBaoHanh_formatted'] = $expiryDate->format('d/m/Y');
+                
+                // Kiểm tra còn bảo hành hay không
+                $now = new DateTime();
+                $item['conBaoHanh'] = ($now <= $expiryDate);
+                
+                // Tính số ngày còn lại
+                if ($item['conBaoHanh']) {
+                    $interval = $now->diff($expiryDate);
+                    $item['ngayConLai'] = $interval->days;
+                    $item['soThang'] = $interval->m + ($interval->y * 12);
+                } else {
+                    $interval = $expiryDate->diff($now);
+                    $item['ngayQuaHan'] = $interval->days;
+                }
+            } else {
+                $item['hanBaoHanh'] = null;
+                $item['conBaoHanh'] = false;
+            }
+        }
+        
+        return $results;
+    }
 }
 ?>

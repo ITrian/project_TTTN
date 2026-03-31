@@ -4,6 +4,34 @@
 <div class="container-fluid">
     <h1 class="h3 mb-4 text-gray-800">Tra cứu & Bảo hành</h1>
 
+    <!-- Navigation buttons -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body text-center py-4">
+                    <h5 class="card-title mb-3">
+                        <i class="fas fa-search fa-2x text-primary mb-2"></i><br>
+                        Tra cứu theo Serial/Lô hàng
+                    </h5>
+                    <p class="card-text text-muted mb-3">Tìm kiếm sản phẩm hoặc Serial để kiểm tra trạng thái bảo hành</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <a href="<?php echo BASE_URL; ?>/warranty/listExported" class="text-decoration-none">
+                <div class="card shadow" style="cursor: pointer; transition: all 0.3s;">
+                    <div class="card-body text-center py-4">
+                        <h5 class="card-title mb-3">
+                            <i class="fas fa-list fa-2x text-success mb-2"></i><br>
+                            Danh sách hàng đã xuất
+                        </h5>
+                        <p class="card-text text-muted mb-3">Xem toàn bộ sản phẩm đã bán và trạng thái bảo hành</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
     <div class="card shadow mb-4">
         <div class="card-body">
             <form action="" method="GET" class="d-flex gap-2">
